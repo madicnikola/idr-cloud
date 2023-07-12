@@ -3,18 +3,9 @@ version: '3'
 services:
   api:
     build: .
-    volumes:
-      - .:/usr/src/app
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: postgres
-      JWT_SECRET: xIAcY3K2EL5Jb4Q%+)a&W(fdF(egk5PTnIhZTeWcbWddaSz$)VhKY+6&fpQf%U%G
     command: python run.py
     ports:
-      - 3000:3000
+      - 5000:5000
     depends_on:
       - db
   db:
@@ -24,11 +15,4 @@ services:
       - '5432:5432'
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_PASSWORD: postgres
-  test-db:
-    image: postgres
-    restart: always
-    ports:
-      - '5433:5432'
-    environment:
       POSTGRES_PASSWORD: postgres
