@@ -9,7 +9,7 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = 'tajni-kljuc'  # Ovo treba da bude tajni ključ. Ne koristite ovu vrednost u produkciji.
     jwt = JWTManager(app)
     # configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/postgres'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)

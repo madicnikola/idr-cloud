@@ -1,20 +1,17 @@
-# Izaberite sliku sa kojom ćete raditi
-FROM python:3.9
+# Koristimo zvanični Python obraz iz Docker Hub-a
+FROM python:3.9-slim-buster
 
-# Postavite radni direktorijum u kontejneru
+# Postavimo radni direktorijum u kontejneru
 WORKDIR /app
 
-# Kopirajte zavisnosti
-COPY requirements.txt .
+# Kopiramo zavisnosti projekta u radni direktorijum
+COPY requirements.txt ./
 
-# Instalirajte sve zavisnosti
-RUN pip install -r requirements.txt
+# Instaliramo zavisnosti projekta
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Kopirajte ostatak koda
+# Kopiramo ostatak koda u radni direktorijum
 COPY . .
 
-# Izložite port koji vaša aplikacija koristi
-EXPOSE 5000
-
-# Postavite komandu koja će se izvršiti kada se kontejner pokrene
+# Definiramo komandu za pokretanje aplikacije
 CMD ["python", "run.py"]
