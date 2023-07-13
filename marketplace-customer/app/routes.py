@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 from . import db
 from .models.order import Order
@@ -48,13 +48,14 @@ def setup_routes(app):
     def order_products():
         try:
             data = request.get_json()
+            claims = get_jwt()
             customer_id = get_jwt_identity()
 
             if 'requests' not in data:
                 return jsonify({'message': 'Field requests is missing.'}), 400
 
             requests = data['requests']
-            order = Order(user_id=customer_id, status='CREATED', total_price=0)
+            order = Order(customer_id=customer_id   , customer_email=claims.get("email"), status='CREATED', total_price=0)
 
             db.session.add(order)
             db.session.flush()
@@ -84,7 +85,7 @@ def setup_routes(app):
     def get_orders():
         try:
             customer_id = get_jwt_identity()
-            orders = Order.query.filter_by(user_id=customer_id).all()
+            orders = Order.query.filter_by(customer_id=customer_id).all()
 
             orders_list = []
             for order in orders:
@@ -121,7 +122,7 @@ def setup_routes(app):
                 return jsonify({"message": "Invalid order id."}), 400
 
             customer_id = get_jwt_identity()
-            order = Order.query.filter_by(id=order_id, user_id=customer_id, status='PENDING').first()
+            order = Order.query.filter_by(id=order_id, customer_id=customer_id, status='PENDING').first()
 
             if order is None:
                 return jsonify({"message": "Invalid order id."}), 400

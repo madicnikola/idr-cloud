@@ -19,7 +19,7 @@ def setup_routes(app):
                 return jsonify({"message": "Only couriers can view pending orders."}), 400
 
             orders_to_deliver = Order.query.filter_by(status='PENDING').all()
-            orders_to_deliver = [{"id": order.id, "user_id": order.user_id} for order in orders_to_deliver]
+            orders_to_deliver = [{"id": order.id, "email": order.customer_email} for order in orders_to_deliver]
 
             return jsonify({"orders": orders_to_deliver}), 200
         except Exception as e:

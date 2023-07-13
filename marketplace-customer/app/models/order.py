@@ -8,7 +8,8 @@ class Order(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), nullable=False)
     creation_timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, nullable=False)
+    customer_id = db.Column(db.Integer, nullable=False)
+    customer_email = db.Column(db.String(50), nullable=False)
 
     # Add new relationship with OrderProduct
     products = db.relationship('OrderProduct', back_populates="order")
