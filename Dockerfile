@@ -1,5 +1,5 @@
 # Izaberite sliku sa kojom ćete raditi
-FROM python:3.9
+FROM python:3.9 as base
 
 # Postavite radni direktorijum u kontejneru
 WORKDIR /app
