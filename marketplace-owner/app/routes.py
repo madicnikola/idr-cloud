@@ -63,8 +63,12 @@ def setup_routes(app):
     def product_statistics():
         statistics = []
         products = Product.query.all()
+        print(products)
         for product in products:
-            orders_with_product = [order for order in Order.query.all() if product in order.products]
+            orders_with_product = [order for order in Order.query.all()
+                                   if any(order_product.product_id == product.id for order_product in order.products)]
+            print("orders_Witn product")
+            print(orders_with_product)
             sold = sum(1 for order in orders_with_product if order.status == 'COMPLETE')
             waiting = sum(1 for order in orders_with_product if order.status == 'PENDING')
             if sold > 0 or waiting > 0:
