@@ -9,8 +9,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from app.models.user import User
 
-# Global variable to hold all active sessions
-active_sessions = {}
 
 from functools import wraps
 
@@ -21,20 +19,6 @@ def validate_data(data, fields):
             return {'message': f'Field {field} is missing.'}, 400
     return None, None
 
-
-def active_session_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        # Get the token from the current request
-        current_token = request.headers.get('Authorization').split(" ")[1]
-
-        # Check if the token is in active_sessions
-        if current_token not in active_sessions:
-            return jsonify({'message': 'No active session'}), 401
-
-        return fn(*args, **kwargs)
-
-    return wrapper
 
 
 def token_required(f):
