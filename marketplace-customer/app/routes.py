@@ -7,60 +7,11 @@ from app.models.category import Category
 from app.models.order import Order
 from app.models.orderProduct import OrderProduct
 from app.models.product import Product
-from app.models.user import User
 
-# Global variable to hold all active sessions
-active_sessions = {}
 
 from functools import wraps
 
-
-def validate_data(data, fields):
-    for field in fields:
-        if not data.get(field):
-            return {'message': f'Field {field} is missing.'}, 400
-    return None, None
-
-
-def active_session_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        # Get the token from the current request
-        current_token = request.headers.get('Authorization').split(" ")[1]
-
-        # Check if the token is in active_sessions
-        if current_token not in active_sessions:
-            return jsonify({'message': 'No active session'}), 401
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        verify_jwt_in_request()  # This will ensure the token is valid.
-        claims = get_jwt()  # If the token is valid, we can now safely use this to get the claims.
-        email = claims['email']  # Getting the user email from the token.
-        current_user = User.query.filter_by(email=email).first()  # Fetching user using email
-        if not current_user:
-            return jsonify({'message': 'Token is invalid'}), 401
-        return f(current_user, *args, **kwargs)
-
-    return decorated
-
-
 def setup_routes(app):
-    @app.route('/')
-    def home():
-        return 'Welcome to the Shop Management System!'
-
-    @app.route('/categories', methods=['GET'])
-    @active_session_required
-    def get_categories():
-        categories = Category.query.all()
-        return jsonify([category.name for category in categories]), 200
 
     @app.route('/search', methods=['GET'])
     @jwt_required()

@@ -10,6 +10,7 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_NAME: postgres
+      JWT_SECRET_KEY: asddkjsd1k3j2193wksdjkas021
     command: python run.py
     volumes:
       - .:/app
@@ -28,11 +29,50 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_NAME: postgres
+      JWT_SECRET_KEY: asddkjsd1k3j2193wksdjkas021
     command: python run.py
     volumes:
       - .:/app
     ports:
       - 5001:5000
+    depends_on:
+      - db
+    restart: on-failure
+  web-market-owner:
+    build:
+      context: .
+      target: marketplace-owner
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: postgres
+      JWT_SECRET_KEY: asddkjsd1k3j2193wksdjkas021
+    command: python run.py
+    volumes:
+      - .:/app
+    ports:
+      - 5002:5000
+    depends_on:
+      - db
+    restart: on-failure
+  web-market-customer:
+    build:
+      context: .
+      target: marketplace-customer
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: postgres
+      JWT_SECRET_KEY: asddkjsd1k3j2193wksdjkas021
+    command: python run.py
+    volumes:
+      - .:/app
+    ports:
+      - 5003:5000
     depends_on:
       - db
     restart: on-failure
