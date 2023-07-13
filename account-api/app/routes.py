@@ -6,8 +6,8 @@ from flask_jwt_extended import jwt_required, verify_jwt_in_request, \
     get_jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from . import db
-from models.user import User
+from .db import db
+from .models.user import User
 
 from functools import wraps
 
