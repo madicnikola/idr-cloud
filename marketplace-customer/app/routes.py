@@ -1,18 +1,13 @@
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request, \
-    get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app import db
-from app.models.category import Category
-from app.models.order import Order
-from app.models.orderProduct import OrderProduct
-from app.models.product import Product
+from . import db
+from .models.order import Order
+from .models.orderProduct import OrderProduct
+from .models.product import Product
 
-
-from functools import wraps
 
 def setup_routes(app):
-
     @app.route('/search', methods=['GET'])
     @jwt_required()
     def search_products():

@@ -3,6 +3,8 @@ import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash
+
 from .db import db
 from .models.user import User
 
@@ -41,7 +43,7 @@ def create_user():
         "forename": "Scrooge",
         "surname": "McDuck",
         "email": "onlymoney@gmail.com",
-        "password": "evenmoremoney",
+        "password": generate_password_hash("evenmoremoney", method='sha256'),
         "role": "owner"
     }
 

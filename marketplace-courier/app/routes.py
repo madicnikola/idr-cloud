@@ -1,10 +1,8 @@
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request, \
-    get_jwt
+from flask_jwt_extended import jwt_required, get_jwt
 
-from app import db
-from app.models.order import Order
-from functools import wraps
+from . import db
+from .models.order import Order
 
 
 def setup_routes(app):
@@ -40,11 +38,11 @@ def setup_routes(app):
             try:
                 order_id = int(order_id)
             except ValueError:
-                return jsonify({"message": "Invalid order id."}), 400
+                return jsonify({"message": "Invalid order id. Must be number"}), 400
 
             order = Order.query.get(order_id)
             if not order or order.status != 'CREATED':
-                return jsonify({"message": "Invalid order id."}), 400
+                return jsonify({"message": f"Invalid order status #{order.status}"}), 400
 
             claims = get_jwt()
             if claims['role'] != 'courier':
@@ -57,5 +55,6 @@ def setup_routes(app):
             return '', 200
         except KeyError:
             return jsonify({"message": "Missing order id."}), 400
-        except:
-            return jsonify({"message": "An error occurred."}), 500
+        except Exception as e:
+            print(str(e))  # Ispisivanje greške u konzolu
+            return jsonify({'msg': 'An error occurred while processing your request: ' + str(e)}), 500

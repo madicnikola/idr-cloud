@@ -2,15 +2,12 @@ import csv
 import io
 
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, verify_jwt_in_request, \
-    get_jwt
+from flask_jwt_extended import jwt_required
 
-from app import db
-from app.models.category import Category
-from app.models.order import Order
-from app.models.product import Product
-
-from functools import wraps
+from . import db
+from .models.category import Category
+from .models.order import Order
+from .models.product import Product
 
 
 def setup_routes(app):
@@ -68,7 +65,7 @@ def setup_routes(app):
         products = Product.query.all()
         for product in products:
             orders_with_product = [order for order in Order.query.all() if product in order.products]
-            sold = sum(1 for order in orders_with_product if order.status == 'DELIVERED')
+            sold = sum(1 for order in orders_with_product if order.status == 'COMPLETE')
             waiting = sum(1 for order in orders_with_product if order.status == 'PENDING')
             if sold > 0 or waiting > 0:
                 statistics.append({
@@ -90,7 +87,7 @@ def setup_routes(app):
                 delivered_products_count = 0
                 for product in category.products:
                     for order_product in product.orders:
-                        if order_product.order.status == 'DELIVERED':
+                        if order_product.order.status == 'COMPLETE':
                             delivered_products_count += order_product.quantity
                 statistics.append((category.name, delivered_products_count))
             statistics.sort(key=lambda x: (-x[1], x[0]))
