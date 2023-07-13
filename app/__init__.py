@@ -15,7 +15,7 @@ def create_app():
     db.init_app(app)
 
     # import models here
-    from .models import user, product, category, order
+    from .models import user, product, category, order, orderProduct
 
     with app.app_context():
         db.create_all()  # create tables
