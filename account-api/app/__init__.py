@@ -26,9 +26,30 @@ def create_app():
 
     with app.app_context():
         db.create_all()  # create tables
+        create_user()
 
     # import routes here
     from .routes import setup_routes
     setup_routes(app)
 
     return app
+
+
+def create_user():
+    user_data = {
+        "forename": "Scrooge",
+        "surname": "McDuck",
+        "email": "onlymoney@gmail.com",
+        "password": "evenmoremoney"
+    }
+
+    existing_user = User.query.filter_by(email=user_data['email']).first()
+    if existing_user:
+        print("User already exists.")
+        return
+
+    usr = User(**user_data)
+    db.session.add(usr)
+    db.session.commit()
+
+    print("User added successfully.")

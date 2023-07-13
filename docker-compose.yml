@@ -5,7 +5,7 @@ services:
       context: .
       target: account-api
     environment:
-      DB_HOST: db
+      DB_HOST: db-account
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -17,14 +17,14 @@ services:
     ports:
       - 5000:5000
     depends_on:
-      - db
+      - db-account
     restart: on-failure
   web-market-courier:
     build:
       context: .
       target: marketplace-courier
     environment:
-      DB_HOST: db
+      DB_HOST: db-marketplace
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -36,14 +36,14 @@ services:
     ports:
       - 5001:5000
     depends_on:
-      - db
+      - db-marketplace
     restart: on-failure
   web-market-owner:
     build:
       context: .
       target: marketplace-owner
     environment:
-      DB_HOST: db
+      DB_HOST: db-marketplace
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -55,14 +55,14 @@ services:
     ports:
       - 5002:5000
     depends_on:
-      - db
+      - db-marketplace
     restart: on-failure
   web-market-customer:
     build:
       context: .
       target: marketplace-customer
     environment:
-      DB_HOST: db
+      DB_HOST: db-marketplace
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
@@ -74,13 +74,22 @@ services:
     ports:
       - 5003:5000
     depends_on:
-      - db
+      - db-marketplace
     restart: on-failure
-  db:
+  db-account:
     image: postgres
     restart: always
     ports:
       - '5433:5432'
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+
+  db-marketplace:
+    image: postgres
+    restart: always
+    ports:
+      - '5434:5432'
     environment:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres

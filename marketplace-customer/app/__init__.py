@@ -1,6 +1,12 @@
+import os
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 db = SQLAlchemy()
 
@@ -26,3 +32,5 @@ def create_app():
     setup_routes(app)
 
     return app
+
+
