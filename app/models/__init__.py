@@ -1,1 +1,0 @@
-# Ovaj fajl omogućava Pythonu da prepozna models direktorijum kao paket. Može ostati prazan.

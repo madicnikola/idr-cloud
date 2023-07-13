@@ -6,9 +6,8 @@ from flask_jwt_extended import jwt_required, verify_jwt_in_request, \
     get_jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db
-from app.models.user import User
-
+from . import db
+from models.user import User
 
 from functools import wraps
 
@@ -18,7 +17,6 @@ def validate_data(data, fields):
         if not data.get(field):
             return {'message': f'Field {field} is missing.'}, 400
     return None, None
-
 
 
 def token_required(f):
