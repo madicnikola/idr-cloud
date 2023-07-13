@@ -212,8 +212,8 @@ def setup_routes(app):
         products = Product.query.all()
         for product in products:
             orders_with_product = [order for order in Order.query.all() if product in order.products]
-            sold = sum(1 for order in orders_with_product if order.status == 'delivered')
-            waiting = sum(1 for order in orders_with_product if order.status == 'pending')
+            sold = sum(1 for order in orders_with_product if order.status == 'DELIVERED')
+            waiting = sum(1 for order in orders_with_product if order.status == 'PENDING')
             if sold > 0 or waiting > 0:
                 statistics.append({
                     "name": product.name,
@@ -234,7 +234,7 @@ def setup_routes(app):
                 delivered_products_count = 0
                 for product in category.products:
                     for order_product in product.orders:
-                        if order_product.order.status == 'delivered':
+                        if order_product.order.status == 'DELIVERED':
                             delivered_products_count += order_product.quantity
                 statistics.append((category.name, delivered_products_count))
             statistics.sort(key=lambda x: (-x[1], x[0]))
@@ -279,8 +279,6 @@ def setup_routes(app):
             print(str(e))  # Print the error for debugging
             return jsonify({'msg': 'An error occurred while processing your request: ' + str(e)}), 500
 
-    from flask_jwt_extended.exceptions import NoAuthorizationError
-
     @app.route('/order', methods=['POST'])
     @jwt_required()
     def order_products():
@@ -294,6 +292,9 @@ def setup_routes(app):
             requests = data['requests']
             order = Order(user_id=customer_id, status='CREATED', total_price=0)
 
+            db.session.add(order)
+            db.session.flush()
+
             for i, req in enumerate(requests):
                 if 'id' not in req or 'quantity' not in req:
                     return jsonify({'message': f'Request number {i} is missing id or quantity.'}), 400
@@ -303,16 +304,10 @@ def setup_routes(app):
                     return jsonify({'message': f'Invalid product for request number {i}.'}), 400
 
                 order.total_price += product.price * req['quantity']
-                order.products.append(product)
 
-                # Insert into 'order_products' table
-                db.session.execute(order_products.insert().values(
-                    order_id=order.id,
-                    product_id=req['id'],
-                    quantity=req['quantity'])
-                )
+                order_product = OrderProduct(order_id=order.id, product_id=req['id'], quantity=req['quantity'])
+                db.session.add(order_product)
 
-            db.session.add(order)
             db.session.commit()
 
             return jsonify({'id': order.id}), 200
@@ -325,83 +320,91 @@ def setup_routes(app):
     def get_orders():
         try:
             customer_id = get_jwt_identity()
-            orders = Order.query.filter_by(customer_id=customer_id).all()
+            orders = Order.query.filter_by(user_id=customer_id).all()
 
             orders_list = []
             for order in orders:
                 order_dict = {
-                    'price': sum([product.price for product in order.products]),
+                    'price': order.total_price,
                     'status': order.status,
-                    'timestamp': order.timestamp.isoformat(),
+                    'timestamp': order.creation_timestamp.isoformat(),
                     'products': [{
-                        'categories': [category.name for category in product.categories],
-                        'id': product.id,
-                        'name': product.name,
-                        'price': product.price,
-                        'quantity': 1  # You need to store the quantity in the order in a real application
-                    } for product in order.products]
+                        'categories': [category.name for category in order_product.product.categories],
+                        'id': order_product.product.id,
+                        'name': order_product.product.name,
+                        'price': order_product.product.price,
+                        'quantity': order_product.quantity
+                    } for order_product in order.products]
                 }
                 orders_list.append(order_dict)
 
             return jsonify({'orders': orders_list}), 200
 
-        except:
-            return jsonify({'msg': 'Missing Authorization Header'}), 401
+        except Exception as e:
+            return jsonify({'msg': 'An error occurred while processing your request: ' + str(e)}), 401
 
     @app.route('/delivered', methods=['POST'])
     @jwt_required()
     def confirm_delivery():
         try:
-            data = request.json
-            order_id = data['id']
+            data = request.get_json()
+            order_id = data.get('id')
+
+            if order_id is None:
+                return jsonify({"message": "Missing order id."}), 400
 
             if not isinstance(order_id, int) or order_id <= 0:
                 return jsonify({"message": "Invalid order id."}), 400
 
-            order = Order.query.get(order_id)
-            if not order or order.status != 'PENDING':
+            customer_id = get_jwt_identity()
+            order = Order.query.filter_by(id=order_id, user_id=customer_id, status='PENDING').first()
+
+            if order is None:
                 return jsonify({"message": "Invalid order id."}), 400
 
             order.status = 'COMPLETE'
             db.session.commit()
 
             return '', 200
-        except KeyError:
-            return jsonify({"message": "Missing order id."}), 400
-        except:
-            return jsonify({"message": "An error occurred."}), 500
+        except Exception as e:
+            return jsonify({"message": "An error occurred.", "error": str(e)}), 500
 
     @app.route('/orders_to_deliver', methods=['GET'])
     @jwt_required()
     def get_orders_to_deliver():
         try:
             orders_to_deliver = Order.query.filter_by(status='PENDING').all()
-            orders_to_deliver = [{"id": order.id, "email": order.customer.email} for order in orders_to_deliver]
+            orders_to_deliver = [{"id": order.id, "userEmail": order.user.email} for order in orders_to_deliver]
 
             return jsonify({"orders": orders_to_deliver}), 200
-        except:
-            return jsonify({"message": "An error occurred."}), 500
+        except Exception as e:
+            return jsonify({"message": "An error occurred.", "error": str(e)}), 500
 
     @app.route('/pick_up_order', methods=['POST'])
     @jwt_required()
     def pick_up_order():
         try:
             data = request.json
-            order_id = data['id']
+            order_id = data.get('id')
 
-            if not isinstance(order_id, int) or order_id <= 0:
+            if not order_id:
+                return jsonify({"message": "Missing order id."}), 400
+
+            try:
+                order_id = int(order_id)
+            except ValueError:
                 return jsonify({"message": "Invalid order id."}), 400
 
             order = Order.query.get(order_id)
-            if not order or order.status != 'PENDING':
+            if not order or order.status != 'CREATED':
                 return jsonify({"message": "Invalid order id."}), 400
 
             courier_id = get_jwt_identity()
             courier = User.query.get(courier_id)
-            if not courier or courier.role != 'COURIER':
+            if not courier or courier.role != 'courier':
                 return jsonify({"message": "Only couriers can pick up orders."}), 400
 
-            order.status = 'IN TRANSIT'
+            order.status = 'PENDING'
             order.courier_id = courier.id
             db.session.commit()
 
@@ -410,3 +413,4 @@ def setup_routes(app):
             return jsonify({"message": "Missing order id."}), 400
         except:
             return jsonify({"message": "An error occurred."}), 500
+

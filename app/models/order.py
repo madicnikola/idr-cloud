@@ -13,5 +13,8 @@ class Order(db.Model):
     # Add new relationship with OrderProduct
     products = db.relationship('OrderProduct', back_populates="order")
 
+    # Define relationship with User model
+    user = db.relationship('User', backref=db.backref('orders', lazy=True))
+
     def __repr__(self):
         return '<Order {}>'.format(self.id)
