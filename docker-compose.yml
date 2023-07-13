@@ -1,7 +1,15 @@
 version: '3.8'
 services:
-  web:
-    build: .
+  web-account:
+    build:
+      context: .
+      target: account-api
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: postgres
     command: python run.py
     volumes:
       - .:/app
@@ -9,11 +17,30 @@ services:
       - 5000:5000
     depends_on:
       - db
+    restart: on-failure
+  web-market-courier:
+    build:
+      context: .
+      target: marketplace-courier
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: postgres
+    command: python run.py
+    volumes:
+      - .:/app
+    ports:
+      - 5001:5000
+    depends_on:
+      - db
+    restart: on-failure
   db:
-      image: postgres
-      restart: always
-      ports:
-        - '5436:5432'
-      environment:
-        POSTGRES_DB: postgres
-        POSTGRES_PASSWORD: postgres
+    image: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres

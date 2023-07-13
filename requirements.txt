@@ -5,3 +5,4 @@ PyJWT~=2.7.0
 Werkzeug~=2.3.6
 psycopg2-binary
 flask_jwt_extended
+python-dotenv
