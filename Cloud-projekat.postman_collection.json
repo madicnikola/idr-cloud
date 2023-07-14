@@ -1,0 +1,556 @@
+{
+	"info": {
+		"_postman_id": "89b54e71-bc40-4cc5-8cfb-b7d1510adeea",
+		"name": "Cloud-projekat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18222558",
+		"_collection_link": "https://speeding-zodiac-404625.postman.co/workspace/neotech~1a08691b-8a4e-45f6-a7fa-73f8d7162b24/collection/18222558-89b54e71-bc40-4cc5-8cfb-b7d1510adeea?action=share&creator=18222558&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "korisničkim nalozi-register_courier - KURIR",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"forename\":\"nikola\",\n    \"surname\":\"madic\",\n    \"email\":\"nikola@gmail.com\",\n    \"password\":\"blablasdasd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{account-host}}/register_courier",
+					"host": [
+						"{{account-host}}"
+					],
+					"path": [
+						"register_courier"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "korisničkim nalozi-register kupac - KUPAC",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"forename\": \"nikola\",\n    \"surname\": \"madic\",\n    \"email\": \"nikola@gmail.com\",\n    \"password\": \"blablasdasd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{account-host}}/register_customer",
+					"host": [
+						"{{account-host}}"
+					],
+					"path": [
+						"register_customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "korisničkim nalozi-login - SVI",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const data = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"tokenKUPAC\", data.accessToken);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"  email\": \"nikola@gmail.com\",\n    \"password\": \"blablasdasd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{account-host}}/login",
+					"host": [
+						"{{account-host}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "korisničkim nalozi-delete - SVI",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4OTI2NDkwOSwianRpIjoiZWIzZmViMGQtZGVkNi00MjI2LTlhNGQtMmRkMWI2NTFjYjZkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjg5MjY0OTA5LCJleHAiOjE2ODkyNjg1MDksImZvcmVuYW1lIjoidmwiLCJzdXJuYW1lIjoibGF6aWMiLCJlbWFpbCI6InYyQGdtYWlsLmNvbSIsInJvbGUiOiJjb3VyaWVyIn0.nEc2DbPjQq186j3VmtyFD2cyYGvLVgY7XCsEoAMHUtQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{account-host}}/delete",
+					"host": [
+						"{{account-host}}"
+					],
+					"path": [
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-dodaj proizvod - VLASNIK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenVLASNIK}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "https://idr-cloud.eu.ngrok.io/update",
+					"protocol": "https",
+					"host": [
+						"idr-cloud",
+						"eu",
+						"ngrok",
+						"io"
+					],
+					"path": [
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-statistika o proizvodima - VLASNIK",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenVLASNIK}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5002/product_statistics",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5002",
+					"path": [
+						"product_statistics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-category statistike - VLASNIK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenVLASNIK}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/search?category=Elektronika",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Smartphone",
+							"disabled": true
+						},
+						{
+							"key": "category",
+							"value": "Elektronika"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-pretraga proizvoda - KUPCI",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/search",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-napravi narudzbinu - KUPCI",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenKUPAC}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"requests\": [\n        {\n            \"id\": 1,\n            \"quantity\": 2\n        },\n        {\n            \"id\": 2,\n            \"quantity\": 3\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/order",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-status (pregled porudzbina) - KUPCI",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenKUPAC}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{marketplace-customer-host}}/search",
+					"host": [
+						"{{marketplace-customer-host}}"
+					],
+					"path": [
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-dostavljanje narudzbina - KUPCI",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenKUPAC}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"id\": 1}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/delivered",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"delivered"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-orders_to_deliver- KURIR",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenKURIR}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5222/orders_to_deliver",
+					"host": [
+						"localhost"
+					],
+					"port": "5222",
+					"path": [
+						"orders_to_deliver"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "prodavnica-pick_up_order - KURIR",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenKURIR}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/pick_up_order",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"pick_up_order"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4OTI0MDIyMSwianRpIjoiNWQ0YWJhMWQtOTkxOC00NDQ4LWI0ODctNDAxMmI2YTljZjk0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjg5MjQwMjIxLCJleHAiOjE2ODkyNDM4MjEsImZvcmVuYW1lIjoidmwiLCJzdXJuYW1lIjoibGF6aWMiLCJlbWFpbCI6InZsQGdtYWlsLmNvbSIsInJvbGUiOiJjb3VyaWVyIn0.wagBTOD-STgmMEhjNELd2Edz76fKBX-KSjvVINcdK5s",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "account-host",
+			"value": "http://127.0.0.1:5111",
+			"type": "string"
+		},
+		{
+			"key": "marketplace-courier-host",
+			"value": "http://127.0.0.1:5222",
+			"type": "string"
+		},
+		{
+			"key": "marketplace-owner-host",
+			"value": "http://127.0.0.1:5333",
+			"type": "string"
+		},
+		{
+			"key": "marketplace-customer-host",
+			"value": "http://127.0.0.1:5444",
+			"type": "string"
+		},
+		{
+			"key": "tokenVLASNIK",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4OTI3NjAxNiwianRpIjoiN2Y4ZjIwMzctMTc1NC00OTEzLTk1NmUtOWExZWI0MzM3ZGY3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjg5Mjc2MDE2LCJleHAiOjE2ODkyNzk2MTYsImZvcmVuYW1lIjoiU2Nyb29nZSIsInN1cm5hbWUiOiJNY0R1Y2siLCJlbWFpbCI6Im9ubHltb25leUBnbWFpbC5jb20iLCJyb2xlIjoib3duZXIifQ.PeF31kilT0kkiJ6GxyRBNCuA2deC1eeJ4UL9JL1E7Tk",
+			"type": "string"
+		},
+		{
+			"key": "tokenKURIR",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4OTI3NzIwNSwianRpIjoiODU3Nzg0YmEtMzA5Mi00NDEyLWFkZjUtZWMyYzQzNWJjMjU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjg5Mjc3MjA1LCJleHAiOjE2ODkyODA4MDUsImZvcmVuYW1lIjoidmwiLCJzdXJuYW1lIjoibGF6aWMiLCJlbWFpbCI6InY1QGdtYWlsLmNvbSIsInJvbGUiOiJjb3VyaWVyIn0.Th9yB3O3LpMKuFhKZj6Y9DAMkKi0pz339DC3P9DvWG4",
+			"type": "string"
+		},
+		{
+			"key": "tokenKUPAC",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4OTI3OTM5NywianRpIjoiZmM1MDFlZDctYWY1My00YTI3LWI4OWEtZWY1M2EzYWYwYzVjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjg5Mjc5Mzk3LCJleHAiOjE2ODkyODI5OTcsImZvcmVuYW1lIjoidmwiLCJzdXJuYW1lIjoibGF6aWMiLCJlbWFpbCI6InZsMEBnbWFpbC5jb20iLCJyb2xlIjoiY3VzdG9tZXIifQ.QAIUNs-lXm2cW2u7o58bQjkBJ5Um7jw9ri8i_uq3thU",
+			"type": "string"
+		}
+	]
+}

@@ -15,7 +15,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 5010:5000
+      - 5111:5000
     depends_on:
       - db-account
     restart: on-failure
@@ -34,7 +34,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 5001:5000
+      - 5222:5000
     depends_on:
       - db-marketplace
     restart: on-failure
@@ -53,7 +53,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 5002:5000
+      - 5333:5000
     depends_on:
       - db-marketplace
     restart: on-failure
@@ -72,7 +72,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 5003:5000
+      - 5444:5000
     depends_on:
       - db-marketplace
     restart: on-failure
